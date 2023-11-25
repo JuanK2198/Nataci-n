@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="estilo.css">
+    <title>Buscador de Resultados SYC</title>
+</head>
+<body>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="conexion.js"></script>
+
+    <div class="background"></div>
+    <div class="content">
+
+    <div class="container">
+        <h1>Buscador de Resultados SYC</h1>
+        <label for="searchInput">Buscar Nadador:</label>
+        <input type="text" id="searchInput" placeholder="Nombre del Nadador">
+        <button onclick="buscar()">Buscar</button>
+
+        <label for="yearFilter">Filtrar por Categoria:</label>
+        <input type="number" id="yearFilter" placeholder="Categoria">
+
+        <label for="styleFilter">Filtrar por Estilo:</label>
+        <select id="styleFilter">
+            <option value="libre">Estilo Libre</option>
+            <option value="espalda">Espalda</option>
+            <option value="pecho">Pecho</option>
+            <option value="mariposa">Mariposa</option>
+        </select>
+
+        <div id="chartContainer">
+            <!-- El gráfico se insertará aquí -->
+        </div>
+    </div>
+
+</body>
+</html>
