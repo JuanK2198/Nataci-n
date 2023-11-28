@@ -1,48 +1,59 @@
-const resultados = [
-    { nombre: 'Nadador1', edad: 25, estilo: 'libre', tiempo: 60 },
-    { nombre: 'Nadador2', edad: 22, estilo: 'espalda', tiempo: 65 },
-    // Agrega más datos según sea necesario
-];
+const { Client } = require('pg');
 
-function buscar() {
-    const nombre = document.getElementById('searchInput').value;
-    const edad = document.getElementById('ageFilter').value;
-    const estilo = document.getElementById('styleFilter').value;
+const conexion = new Client({
+    host: 'localhost',
+    database: 'Prueba',
+    user: 'postgres',
+    password: 'Juank831'
+});
 
-    // Filtra los resultados según los criterios de búsqueda
-    const resultadosFiltrados = resultados.filter(result => 
-        (nombre === '' || result.nombre.toLowerCase().includes(nombre.toLowerCase())) &&
-        (edad === '' || result.edad == edad) &&
-        (estilo === 'todos' || result.estilo === estilo)
-    );
+async function obtenerDatos() {
+    try {
+        await conexion.connect();
+        console.log('CONEXION EXITOSA');
 
-    // Muestra el gráfico con los resultados filtrados
-    mostrarGrafico(resultadosFiltrados);
+        const nadadoresQuery = "SELECT * FROM nadadores";
+
+        const resultado = await conexion.query(nadadoresQuery);
+        const datosNadadores = resultado.rows;
+
+        // Llamar a la función para mostrar datos en la tabla
+        mostrarDatosEnTabla(datosNadadores);
+    } catch (error) {
+        console.error('Error:', error.message);
+    } finally {
+        // Siempre cerrar la conexión después de usarla
+        await conexion.end();
+    }
 }
 
-function mostrarGrafico(resultados) {
-    const labels = resultados.map(result => result.nombre);
-    const tiempos = resultados.map(result => result.tiempo);
+// Lógica para mostrar datos en la tabla
+function mostrarDatosEnTabla(datos) {
+    $(document).ready(function() {
+        // Obtener referencia al cuerpo de la tabla
+        var cuerpoTabla = $('#example tbody');
 
-    const ctx = document.getElementById('chartContainer').getContext('2d');
-    const myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Tiempo (segundos)',
-                data: tiempos,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
+        // Limpiar contenido existente en el cuerpo de la tabla
+        cuerpoTabla.empty();
+
+        // Iterar sobre los datos y agregar filas a la tabla
+        datos.forEach(function(fila) {
+            cuerpoTabla.append(`
+                <tr>
+                    <td>${fila.id_nadador}</td>
+                    <td>${fila.Nombre}</td>
+                    <td>${fila.Apellido}</td>
+                    <td>${fila.Edad}</td>
+                    <td>${fila.Equipo}</td>
+                </tr>
+            `);
+        });
+
+        // Inicializar DataTables después de cargar los datos
+        $('#example').DataTable();
+    });
 }
+
+// Llamar a la función para obtener y mostrar datos
+obtenerDatos();
+
